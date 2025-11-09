@@ -18,6 +18,7 @@ Create an `.env.local` file with the following variables:
 CAREERJET_API_KEY=your_api_key_here
 CAREERJET_FALLBACK_IP=1.1.1.1          # optional – default IP for build-time fetches
 CAREERJET_FALLBACK_UA=JobHubBot/1.0    # optional – default UA for build-time fetches
+CAREERJET_REFERER=https://jobhub.example.com  # required if Careerjet enforces Referer checks
 NEXT_PUBLIC_SITE_URL=https://jobhub.example.com
 NEXT_PUBLIC_TINYADS_SLOT_ID=your_tinyads_slot
 ```

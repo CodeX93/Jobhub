@@ -91,6 +91,14 @@ function buildAuthHeader() {
   return `Basic ${credentials}`;
 }
 
+function getReferer() {
+  return (
+    process.env.CAREERJET_REFERER ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    "https://jobhub.example.com"
+  );
+}
+
 async function getRequestMetadata() {
   try {
     const headerList = await headers();
@@ -176,6 +184,7 @@ const cachedSearch = unstable_cache(
     const response = await fetch(`${API_ENDPOINT}?${queryString}`, {
       headers: {
         Authorization: buildAuthHeader(),
+        Referer: getReferer(),
       },
       // Always fetch on the server
       next: {
