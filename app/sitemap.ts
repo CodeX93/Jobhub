@@ -8,8 +8,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   let jobs = getCachedJobsSnapshot();
   if (jobs.length === 0) {
-    const response = await searchJobs({ pageSize: 20 });
-    jobs = response.jobs ?? [];
+    try {
+      const response = await searchJobs({ pageSize: 20 });
+      jobs = response.jobs ?? [];
+    } catch (error) {
+      console.error("Failed to fetch jobs for sitemap:", error);
+    }
   }
 
   const jobEntries = jobs.map((job) => {

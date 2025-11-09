@@ -22,7 +22,7 @@ NEXT_PUBLIC_SITE_URL=https://jobhub.example.com
 NEXT_PUBLIC_TINYADS_SLOT_ID=your_tinyads_slot
 ```
 
-> The CareerJet API requires Basic auth with the API key as the username and an empty password. The app handles the header for you once the key is supplied. The fallback IP/UA values are used for build-time requests (sitemap generation, etc.).
+> The CareerJet API requires Basic auth with the API key as the username and an empty password. The app handles the header for you once the key is supplied. The fallback IP/UA values are used for build-time requests (sitemap generation, etc.); be sure to provide a valid routable IP (for example, your build server’s egress IP) to avoid `403 Invalid user_ip` responses.
 
 ### Local development
 

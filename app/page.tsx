@@ -199,6 +199,16 @@ export default async function Home({
             Latest openings
           </h2>
 
+          {response.type === "ERROR" ? (
+            <div className="rounded-2xl border border-rose-200 bg-rose-50 p-6 text-sm text-rose-900">
+              <p className="font-semibold">We couldn’t fetch jobs right now.</p>
+              <p className="mt-2">
+                {response.message ||
+                  "Careerjet rejected the request. Please retry in a moment or adjust your filters."}
+              </p>
+            </div>
+          ) : null}
+
           {response.type === "LOCATIONS" ? (
             <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 text-sm text-amber-900">
               <p className="font-semibold">We found several matching locations.</p>

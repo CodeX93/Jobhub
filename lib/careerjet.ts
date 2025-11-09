@@ -65,6 +65,16 @@ const jobCache = new Map<
   { job: CareerjetJob; expiresAt: number }
 >();
 
+function emptyResponse(message?: string): CareerjetSearchResponse {
+  return {
+    type: "ERROR",
+    message,
+    hits: 0,
+    pages: 1,
+    jobs: [],
+  };
+}
+
 function ensureApiKey() {
   const apiKey = process.env.CAREERJET_API_KEY;
   if (!apiKey) {
@@ -81,14 +91,14 @@ function buildAuthHeader() {
   return `Basic ${credentials}`;
 }
 
-function getRequestMetadata() {
+async function getRequestMetadata() {
   try {
-    const headerList = headers();
+    const headerList = await headers();
     const forwardedFor = headerList.get("x-forwarded-for") ?? "";
     const ip =
       forwardedFor.split(",").map((segment) => segment.trim())[0] ||
       process.env.CAREERJET_FALLBACK_IP ||
-      "1.1.1.1";
+      "8.8.8.8";
     const userAgent =
       headerList.get("user-agent") ||
       process.env.CAREERJET_FALLBACK_UA ||
@@ -96,7 +106,7 @@ function getRequestMetadata() {
     return { ip, userAgent };
   } catch {
     return {
-      ip: process.env.CAREERJET_FALLBACK_IP || "1.1.1.1",
+      ip: process.env.CAREERJET_FALLBACK_IP || "8.8.8.8",
       userAgent: process.env.CAREERJET_FALLBACK_UA || "JobHubBot/1.0",
     };
   }
@@ -194,9 +204,18 @@ const cachedSearch = unstable_cache(
 );
 
 export async function searchJobs(criteria: CareerjetSearchCriteria = {}) {
-  const requestMeta = getRequestMetadata();
+  const requestMeta = await getRequestMetadata();
   const queryString = buildQueryString(criteria, requestMeta);
-  return cachedSearch(queryString);
+  try {
+    return await cachedSearch(queryString);
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.error("Careerjet search failed:", error);
+    }
+    return emptyResponse(
+      error instanceof Error ? error.message : "Careerjet API unavailable"
+    );
+  }
 }
 
 export function getJobFromCache(hash: string) {
